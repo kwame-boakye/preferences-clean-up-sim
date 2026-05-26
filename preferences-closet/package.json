@@ -1,0 +1,16 @@
+{
+  "name": "preferences-closet",
+  "version": "0.1.0",
+  "description": "Internship simulation: clean up a messy preferences system into a schema + registry + search.",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dump": "tsc && node dist/scripts/dump.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

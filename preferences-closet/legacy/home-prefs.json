@@ -1,0 +1,81 @@
+{
+  "_comment": "legacy/home-prefs.json — DELIBERATE MESS. A different team stored Home prefs as JSON. Note: keyed by display label in some cases, by slug in others. One accessibility toggle got dropped in here by mistake (see _bug).",
+  "_bug": "the 'underline_links' entry below is an ACCESSIBILITY preference, not a Home one. It needs to move during migration.",
+
+  "preferences": [
+    {
+      "slug": "channel-org-recs",
+      "label": "Get recommendations to organize your channels",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "slug": "home-activity-dot",
+      "label": "Show a dot on the Home icon when there is unread activity",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "label": "Always show in the sidebar",
+      "widget": "checkbox_group",
+      "selected": ["slackbot", "huddles", "threads", "drafts_sent", "directories"],
+      "all_options": ["slackbot", "unreads", "huddles", "threads", "drafts_sent", "directories"]
+    },
+    {
+      "slug": "conversation-filter",
+      "label": "Filter conversations by",
+      "widget": "radio",
+      "value": "active_only",
+      "options": ["active_only", "unreads", "mentions", "all"]
+    },
+    {
+      "slug": "conversation-sort",
+      "label": "Sort conversations by",
+      "widget": "radio",
+      "value": "a_z",
+      "options": ["a_z", "most_recent", "priority"]
+    },
+    {
+      "slug": "show-profile-photos-dms",
+      "label": "Show profile photos next to DMs",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "slug": "separate-private-channels",
+      "label": "Separate private channels from public ones in sidebar",
+      "widget": "checkbox",
+      "checked": false
+    },
+    {
+      "slug": "separate-dms-apps",
+      "label": "Separate direct messages and apps from channels in sidebar",
+      "widget": "checkbox",
+      "checked": false
+    },
+    {
+      "slug": "unread-mentions-to-top",
+      "label": "Move items with unread Mentions to top of sections",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "slug": "organize-external-conversations",
+      "label": "Organize external conversations into the External Connections section",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "slug": "hide-muted-channels",
+      "label": "Hide muted channels from your sidebar",
+      "widget": "checkbox",
+      "checked": true
+    },
+    {
+      "slug": "underline_links",
+      "label": "Underline links to websites",
+      "widget": "checkbox",
+      "checked": false
+    }
+  ]
+}
