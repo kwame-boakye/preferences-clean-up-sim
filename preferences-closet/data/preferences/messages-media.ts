@@ -50,17 +50,6 @@ export const messagesMediaPreferences: Preference[] = [
     status: "active",
   },
   {
-    id: "messages-clock-24h",
-    category: "messages-media",
-    owner: "messages-team",
-    label: "Use 24-hour clock",
-    description: "Display timestamps in 24-hour format instead of AM/PM.",
-    control: "toggle",
-    default: false,
-    keywords: ["24 hour", "clock", "time", "format", "timestamp"],
-    status: "active",
-  },
-  {
     id: "messages-color-swatches",
     category: "messages-media",
     owner: "messages-team",

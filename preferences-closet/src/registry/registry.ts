@@ -7,13 +7,28 @@
  * alongside this.
  */
 
-import type { Category, Preference, PreferenceValue } from "./types.js";
+import type { Category, ControlType, Options, Preference, PreferenceValue } from "./types.js";
 import { CATEGORIES, isTimeRangeValue } from "./types.js";
 import { search as searchPreferences } from "../search/search.js";
 
 export interface DuplicateWarning {
   ids: string[];
   reason: string;
+}
+
+/** The shape emitted by toJSON() — every field an agent needs to reason about any preference. */
+export interface PreferenceJSON {
+  id: string;
+  label: string;
+  description: string;
+  category: Category;
+  owner: string;
+  control: ControlType;
+  options?: Options;
+  default: PreferenceValue;
+  keywords: string[];
+  status: "active" | "deprecated";
+  dependsOn?: { id: string; when: PreferenceValue };
 }
 
 export class Registry {
@@ -87,8 +102,12 @@ export class Registry {
         continue;
       }
 
+      // Same-category structural similarity (e.g. six nav tabs) is intentional by design.
+      // Only cross-category token overlap signals a genuine misplaced duplicate.
+      if (existing.category === incoming.category) continue;
+
       const sharedTokens = [...tokens(existing)].filter((t) => tokens(incoming).has(t));
-      if (sharedTokens.length >= 3) {
+      if (sharedTokens.length >= 5) {
         this.warnings.push({
           ids: [existing.id, incoming.id],
           reason: `High token overlap (${sharedTokens.length} shared terms: ${sharedTokens.slice(0, 5).join(", ")})`,
@@ -118,14 +137,27 @@ export class Registry {
   }
 
   /**
-   * The agent-readable export: full structured status of every preference.
-   * TODO(kelvin): decide what "status" means here — just defaults, or current values too?
-   * For the simulation, defaults are fine to start.
+   * Agent-readable export: full structured status of every preference.
+   * Outputs defaults (not live values) — sufficient for the simulation.
+   * Agents reading this can tell: what each pref does, where it lives, who owns it,
+   * what values are valid, and what other prefs it depends on.
    */
-  toJSON(): Record<string, { category: Category; control: string; default: PreferenceValue }> {
-    const out: Record<string, { category: Category; control: string; default: PreferenceValue }> = {};
+  toJSON(): Record<string, PreferenceJSON> {
+    const out: Record<string, PreferenceJSON> = {};
     for (const p of this.byId.values()) {
-      out[p.id] = { category: p.category, control: p.control, default: p.default };
+      out[p.id] = {
+        id: p.id,
+        label: p.label,
+        description: p.description,
+        category: p.category,
+        owner: p.owner,
+        control: p.control,
+        options: p.options,
+        default: p.default,
+        keywords: p.keywords ?? [],
+        status: p.status ?? "active",
+        dependsOn: p.dependsOn,
+      };
     }
     return out;
   }

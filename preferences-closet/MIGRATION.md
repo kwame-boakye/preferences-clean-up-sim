@@ -38,6 +38,19 @@ plain and honest. This is what you'd present.
 - Resolution: moved to `accessibility.ts` as `accessibility-underline-links`. It controls a
   visual accessibility aid (link underlines for non-color distinguishability), not sidebar layout.
 
+### Second duplicate found (post-migration, via registry warning)
+
+- **"Use 24-hour clock"** (`messages-clock-24h` in messages-media) and **"Time format"**
+  (`language-region-time-format` in language-region) both control whether timestamps
+  display as 12h (AM/PM) or 24h. Two teams (messages-team and i18n-team) independently
+  added the same setting. Surfaced by the registry's token-overlap detector at 7 shared
+  terms: `hour, clock, display, timestamps, format`.
+- Resolution: dropped `messages-clock-24h`. Canonical copy is `language-region-time-format`.
+  Rationale: 12h vs 24h is a locale/region preference, not a messages-specific one —
+  users naturally look for it alongside language and timezone. The `single_select` control
+  is also less ambiguous than a toggle (the user sees the labels "12-hour" / "24-hour"
+  rather than inferring which direction "on" means).
+
 ### Docs mixed into data
 - `markAsRead` in `random-team-additions.ts` included four `{ doc: "..." }` entries for
   keyboard shortcuts (Esc, Shift+Esc, Option+click, Cmd+/).

@@ -1,17 +1,18 @@
+import { useMemo, useState } from "react";
+import type { Category } from "./registry/types.js";
+import { buildRegistry } from "./registry/registry.js";
+import { CategoryRail } from "./ui/components/CategoryRail.js";
+import { DetailPane } from "./ui/components/DetailPane.js";
 import styles from "./ui/styles/App.module.css";
 
-/**
- * Placeholder. The real two-pane UI is built in milestones 7-9.
- * For milestone 1, getting this to render in the browser via `npm run dev` is enough.
- */
 export function App() {
+  const registry = useMemo(() => buildRegistry(), []);
+  const [selected, setSelected] = useState<Category>("availability");
+
   return (
     <main className={styles.app}>
-      <h1>Preferences Closet</h1>
-      <p>
-        UI not built yet. See <code>PROJECT.md</code> milestone 7. Start with milestone 1:
-        read <code>legacy/</code> and list what's there.
-      </p>
+      <CategoryRail registry={registry} selected={selected} onSelect={setSelected} />
+      <DetailPane registry={registry} category={selected} />
     </main>
   );
 }
