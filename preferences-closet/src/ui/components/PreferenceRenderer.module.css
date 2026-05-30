@@ -1,0 +1,42 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.dimmed {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.label {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.description {
+  font-size: 0.825rem;
+  color: #666;
+  margin-top: 0.2rem;
+  line-height: 1.4;
+}
+
+.dependsNote {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.control {
+  flex-shrink: 0;
+  padding-top: 0.1rem;
+}

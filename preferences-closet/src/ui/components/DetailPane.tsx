@@ -1,5 +1,7 @@
-import type { Category } from "../../registry/types.js";
+import { useState } from "react";
+import type { Category, PreferenceValue } from "../../registry/types.js";
 import type { Registry } from "../../registry/registry.js";
+import { PreferenceRenderer } from "./PreferenceRenderer.js";
 import styles from "./DetailPane.module.css";
 
 interface DetailPaneProps {
@@ -14,20 +16,28 @@ function formatCategory(cat: Category): string {
 export function DetailPane({ registry, category }: DetailPaneProps) {
   const prefs = registry.getByCategory(category);
 
+  const [values, setValues] = useState<Record<string, PreferenceValue>>(() =>
+    Object.fromEntries(prefs.map((p) => [p.id, p.default])),
+  );
+
+  const handleChange = (id: string, v: PreferenceValue) =>
+    setValues((prev) => ({ ...prev, [id]: v }));
+
   return (
     <div className={styles.pane}>
       <h2 className={styles.heading}>{formatCategory(category)}</h2>
       {prefs.length === 0 ? (
         <p className={styles.empty}>No preferences in this category.</p>
       ) : (
-        <ul className={styles.list}>
-          {prefs.map((pref) => (
-            <li key={pref.id} className={styles.item}>
-              <div className={styles.label}>{pref.label}</div>
-              <div className={styles.description}>{pref.description}</div>
-            </li>
-          ))}
-        </ul>
+        prefs.map((pref) => (
+          <PreferenceRenderer
+            key={pref.id}
+            pref={pref}
+            value={values[pref.id] ?? pref.default}
+            onChange={(v) => handleChange(pref.id, v)}
+            allValues={values}
+          />
+        ))
       )}
     </div>
   );

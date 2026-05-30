@@ -1,0 +1,102 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.selected {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.4rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.arrows {
+  display: flex;
+  flex-direction: column;
+}
+
+.arrowBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.arrowBtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.itemLabel {
+  flex: 1;
+}
+
+.locked {
+  flex: 1;
+  color: #444;
+}
+
+.lockNote {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 1rem;
+  padding: 0 0.2rem;
+}
+
+.removeBtn:hover {
+  color: #c00;
+}
+
+.available {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.availableLabel {
+  color: #666;
+}
+
+.addBtn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.addBtn:hover {
+  background: #f0f0f0;
+}
+
+.dynamic {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}

@@ -12,7 +12,7 @@ export function App() {
   return (
     <main className={styles.app}>
       <CategoryRail registry={registry} selected={selected} onSelect={setSelected} />
-      <DetailPane registry={registry} category={selected} />
+      <DetailPane key={selected} registry={registry} category={selected} />
     </main>
   );
 }
