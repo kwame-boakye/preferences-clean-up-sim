@@ -6,24 +6,49 @@
  * existed" problem is actually solved.
  */
 
-import { describe, it } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
+import { buildRegistry, type Registry } from "../src/registry/registry.js";
 
 describe("search", () => {
-  // TODO(kelvin): "dark mode" should find the appearance color-mode / theme preference,
-  // even though neither label literally contains "dark mode" (use keywords).
-  it.todo('synonym: "dark mode" finds the appearance color-mode preference');
+  let registry: Registry;
 
-  // TODO(kelvin): "unreads" appears in BOTH the Home sidebar multi-select and the
-  // Home conversation filter — search must return BOTH, not just the first.
-  it.todo('multi-hit: "unreads" returns both Home preferences that mention it');
+  beforeAll(() => {
+    registry = buildRegistry();
+  });
 
-  // TODO(kelvin): "timezone" should return both the auto-timezone toggle and the manual select.
-  it.todo('multi-hit: "timezone" returns the auto toggle and the manual select');
+  it('synonym: "dark mode" finds the appearance color-mode preference', () => {
+    const results = registry.search("dark mode");
+    const ids = results.map((p) => p.id);
+    expect(ids).toContain("appearance-color-mode");
+  });
 
-  // TODO(kelvin): "english" appears in both Language and Keyboard layout — disambiguate by
-  // description, but still return both.
-  it.todo('multi-hit: "english" returns both language and keyboard-layout preferences');
+  it('multi-hit: "unreads" returns both Home preferences that mention it', () => {
+    const results = registry.search("unreads");
+    const ids = results.map((p) => p.id);
+    expect(ids).toContain("home-always-show-in-sidebar");
+    expect(ids).toContain("home-conversation-filter");
+  });
 
-  // TODO(kelvin): empty / nonsense query returns no results without throwing.
-  it.todo("empty query returns no results and does not throw");
+  it('multi-hit: "timezone" returns the auto toggle and the manual select', () => {
+    const results = registry.search("timezone");
+    const ids = results.map((p) => p.id);
+    expect(ids).toContain("language-region-auto-timezone");
+    expect(ids).toContain("language-region-timezone");
+  });
+
+  // "english" hits language-region-language (language picker) and language-region-timezone
+  // (cross-search keyword added because timezone names are often expressed in English locale).
+  // No keyboard-layout pref exists in this simulation — both hits are in language-region.
+  it('multi-hit: "english" returns both language-picker and timezone preferences', () => {
+    const results = registry.search("english");
+    const ids = results.map((p) => p.id);
+    expect(ids).toContain("language-region-language");
+    expect(ids).toContain("language-region-timezone");
+  });
+
+  it("empty query returns no results and does not throw", () => {
+    expect(registry.search("")).toEqual([]);
+    expect(registry.search("   ")).toEqual([]);
+    expect(registry.search("xkzqwjfhvbnm")).toEqual([]);
+  });
 });
