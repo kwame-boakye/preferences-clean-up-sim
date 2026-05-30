@@ -1,0 +1,92 @@
+import type { Preference } from "../../src/registry/types.js";
+
+// Migration note: navTabs in legacy stored 6 tab flags + 1 appearance radio as one object.
+// Split into 7 atomic prefs (6 toggles + 1 single_select) because the tab visibility flags
+// are independent — showing Home has no bearing on showing Files.
+
+export const navigationPreferences: Preference[] = [
+  {
+    id: "navigation-tab-home",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show Home tab",
+    description: "Display the Home tab in the navigation bar.",
+    control: "toggle",
+    default: true,
+    keywords: ["navigation", "home", "tab", "sidebar"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-dms",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show DMs tab",
+    description: "Display the Direct Messages tab in the navigation bar.",
+    control: "toggle",
+    default: true,
+    keywords: ["navigation", "dms", "direct messages", "tab"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-activity",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show Activity tab",
+    description: "Display the Activity tab in the navigation bar.",
+    control: "toggle",
+    default: true,
+    keywords: ["navigation", "activity", "tab", "feed"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-files",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show Files tab",
+    description: "Display the Files tab in the navigation bar.",
+    control: "toggle",
+    default: true,
+    keywords: ["navigation", "files", "tab", "documents"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-later",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show Later tab",
+    description: "Display the Later (saved items) tab in the navigation bar.",
+    control: "toggle",
+    default: true,
+    keywords: ["navigation", "later", "saved", "tab", "bookmarks"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-tools",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Show Tools tab",
+    description: "Display the Tools tab in the navigation bar.",
+    control: "toggle",
+    default: false,
+    keywords: ["navigation", "tools", "tab", "apps"],
+    status: "active",
+  },
+  {
+    id: "navigation-tab-appearance",
+    category: "navigation",
+    owner: "navigation-team",
+    label: "Tab appearance",
+    description: "Control whether navigation tabs show icons only or icons with text labels.",
+    control: "single_select",
+    options: {
+      kind: "static",
+      values: [
+        { value: "icons_and_text", label: "Icons and text" },
+        { value: "icons_only", label: "Icons only" },
+      ],
+    },
+    default: "icons_and_text",
+    keywords: ["navigation", "tabs", "icons", "text", "labels", "appearance"],
+    status: "active",
+  },
+];

@@ -44,11 +44,45 @@ describe("Registry", () => {
     expect(json["availability-working-hours"]?.control).toBe("time_range");
   });
 
-  // TODO(kelvin): once you migrate notifications + vip, write a test proving the
-  // VIP-"always allow when paused" pair is flagged as a suspected duplicate via getWarnings().
-  it.todo("flags the VIP-paused suspected duplicate across notifications and vip");
+  it("flags the VIP-paused suspected duplicate across notifications and vip", () => {
+    const r = new Registry();
+    const notifVersion: Preference = {
+      id: "notifications-vip-when-paused",
+      category: "notifications",
+      owner: "notifications-team",
+      label: "Messages from VIPs, even if notifications are paused",
+      description: "Always deliver notifications from VIP contacts even when notifications are paused.",
+      control: "toggle",
+      default: false,
+      keywords: ["vip", "notifications", "paused", "always allow"],
+    };
+    const vipVersion: Preference = {
+      id: "vip-always-allow-notifications",
+      category: "vip",
+      owner: "vip-team",
+      label: "Always allow notifications from VIPs",
+      description: "Receive notifications from VIPs even when your notifications are paused.",
+      control: "toggle",
+      default: false,
+      keywords: ["vip", "notifications", "paused"],
+    };
+    r.register(notifVersion);
+    r.register(vipVersion);
+    const warnings = r.getWarnings();
+    expect(warnings.length).toBeGreaterThan(0);
+    const vipWarning = warnings.find(
+      (w) => w.ids.includes("notifications-vip-when-paused") && w.ids.includes("vip-always-allow-notifications")
+    );
+    expect(vipWarning).toBeDefined();
+  });
 
-  // TODO(kelvin): write a test that validates `default` shape matches `control`
-  // (e.g. a toggle whose default is a string should be rejected).
-  it.todo("rejects a preference whose default shape doesn't match its control");
+  it("rejects a preference whose default shape doesn't match its control", () => {
+    const r = new Registry();
+    const bad: Preference = {
+      ...fixture("availability-auto-status-huddle"), // toggle, default: true
+      id: "bad-toggle",
+      default: "yes" as unknown as boolean, // wrong shape
+    };
+    expect(() => r.register(bad)).toThrowError(/default value shape/);
+  });
 });
