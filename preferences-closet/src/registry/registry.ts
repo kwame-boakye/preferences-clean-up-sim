@@ -33,10 +33,7 @@ export class Registry {
       throw new Error(`Preference "${pref.id}" has unknown category "${pref.category}"`);
     }
 
-    // TODO(kelvin): validate that `default`'s shape matches `control`
-    // (toggle -> boolean, single_select -> string, etc.). isTimeRangeValue() is provided
-    // as a starting helper. Decide how strict to be and write tests for it.
-    void isTimeRangeValue;
+    this.validateDefault(pref);
 
     this.flagSuspectedDuplicates(pref);
     this.byId.set(pref.id, pref);
@@ -50,6 +47,28 @@ export class Registry {
    * in each location, so exact-match won't catch it. Consider keyword overlap or a similarity
    * score. This is the feature that demonstrates the "50% didn't know it existed" fix.
    */
+  private validateDefault(pref: Preference): void {
+    const { id, control, default: def } = pref;
+    const isStringArray = (v: PreferenceValue) => Array.isArray(v) && v.every((x) => typeof x === "string");
+
+    const valid =
+      (control === "toggle" && typeof def === "boolean") ||
+      (control === "single_select" && typeof def === "string") ||
+      (control === "text" && typeof def === "string") ||
+      (control === "multi_select" && isStringArray(def)) ||
+      (control === "ordered_multi_select" && isStringArray(def)) ||
+      (control === "list_builder" && isStringArray(def)) ||
+      (control === "managed_list" && isStringArray(def)) ||
+      (control === "entity_picker" && isStringArray(def)) ||
+      (control === "time_range" && isTimeRangeValue(def));
+
+    if (!valid) {
+      throw new Error(
+        `Preference "${id}" has control "${control}" but its default value shape does not match.`
+      );
+    }
+  }
+
   private flagSuspectedDuplicates(incoming: Preference): void {
     const norm = (s: string) => s.trim().toLowerCase();
     for (const existing of this.byId.values()) {

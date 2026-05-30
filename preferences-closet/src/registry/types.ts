@@ -55,6 +55,12 @@ export interface PreferenceOption {
    * (Accessibility verbosity: Sender, Message). Reorderable but not removable.
    */
   locked?: boolean;
+  /**
+   * True when the label contains runtime-resolved content (e.g. user's email domain).
+   * A renderer seeing this flag must substitute the live value before displaying.
+   * Signals to agents reading toJSON() that the label is a template, not a literal string.
+   */
+  dynamicLabel?: boolean;
 }
 
 /**
@@ -122,14 +128,11 @@ export interface Preference {
   keywords?: string[];
 
   /**
-   * If set, this preference is only meaningful when another preference is in a given state.
-   * Three real cases: large-files↔linked-images, manual-timezone↔auto-timezone,
-   * music-timing↔play-music.
-   *
-   * TODO(kelvin): is a single dependsOn enough, or do you need a richer condition
-   * (e.g. "enabled only when X == false")? (PROJECT.md Section 4, item 2.)
+   * If set, this preference is only meaningful when another preference equals a given value.
+   * Three real cases: large-files↔linked-images (when: true), manual-timezone↔auto-timezone
+   * (when: false), music-timing↔play-music (when: true).
    */
-  dependsOn?: string;
+  dependsOn?: { id: string; when: PreferenceValue };
 
   status?: "active" | "deprecated";
 }
