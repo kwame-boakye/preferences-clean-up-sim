@@ -6,28 +6,44 @@ plain and honest. This is what you'd present.
 
 ## The "before" (what was wrong)
 
-- [ ] Preferences scattered across `legacy/notifications-and-misc.ts`, `legacy/home-prefs.json`,
-      and `legacy/random-team-additions.ts` — three different formats, no shared shape.
-- [ ] No stable ids (keyed by slug / label / array position depending on the file).
-- [ ] No category ownership.
-- [ ] (fill in the rest as you find it)
+- Preferences scattered across `legacy/notifications-and-misc.ts`, `legacy/home-prefs.json`,
+  and `legacy/random-team-additions.ts` — three different formats, no shared shape.
+- No stable ids: keyed by `key`, `slug`, display label, or array position depending on the file.
+- No category ownership — any team added preferences wherever they wanted.
+- Field names inconsistent: some entries used `title`, some `name`, some neither.
+- Documentation mixed into data: `markAsRead` included keyboard-shortcut copy (`{ doc: "..." }`)
+  as if it were a preference object.
+- One preference misfiled in the wrong category: `underline_links` in `home-prefs.json`.
+- One real duplicate: the VIP "always allow notifications when paused" preference existed in
+  both `notifications-and-misc.ts` (as `vip_when_paused`) and `random-team-additions.ts`
+  (as position `[0]` in `renderVipSettings()`), with different keys and slightly different wording.
+- Dependency between `show_large_files` and `show_linked_images` noted in a code comment
+  (`"only if show_linked_images"`) with no machine-readable representation.
 
 ## Findings (the interesting stuff)
 
 ### Duplicate found
-- **VIP "always allow notifications when paused"** exists twice: as `vip_when_paused` in
-  `notifications-and-misc.ts` and as the `[0]` entry in `renderVipSettings()` in
-  `random-team-additions.ts`. Different keys, slightly different wording, same behavior.
-- Resolution: _(which one wins? what id? which category owns it? — write your decision)_
+- **VIP "always allow notifications when paused"** existed twice: as `vip_when_paused` in
+  `notifications-and-misc.ts` ("Messages from VIPs, even if notifications are paused") and
+  as position `[0]` in `renderVipSettings()` in `random-team-additions.ts` ("Always allow
+  notifications from VIPs"). Different keys, slightly different wording, same behavior.
+- Resolution: canonical copy assigned to `vip` category as `vip-always-allow-when-paused`.
+  Rationale: this preference governs what VIP contacts can do to your notification rules —
+  it's a VIP behavior, not a general notification setting. The `notifications.ts` copy was
+  dropped entirely.
 
 ### Misfiled preference
-- **"Underline links to websites"** lives in `home-prefs.json` but is an Accessibility
-  preference.
-- Resolution: _(your decision)_
+- **"Underline links to websites"** (`underline_links`) lived in `home-prefs.json` under the
+  Home category.
+- Resolution: moved to `accessibility.ts` as `accessibility-underline-links`. It controls a
+  visual accessibility aid (link underlines for non-color distinguishability), not sidebar layout.
 
 ### Docs mixed into data
-- `markAsRead` in `random-team-additions.ts` includes keyboard-shortcut `doc` entries.
-- Resolution: _(kept as UI copy, excluded from registry — confirm)_
+- `markAsRead` in `random-team-additions.ts` included four `{ doc: "..." }` entries for
+  keyboard shortcuts (Esc, Shift+Esc, Option+click, Cmd+/).
+- Resolution: excluded from the registry entirely. Keyboard shortcuts are UI copy owned by
+  the help system, not user-configurable preferences. Only the two real prefs (`on_view` and
+  `confirm_mark_all`) were migrated.
 
 ## Schema decisions (the Section-4 judgment calls)
 
@@ -99,6 +115,10 @@ system-populated lists.
 
 ## The "after" (what it looks like now)
 
-- [ ] One `Preference` schema, one registry, search, machine-readable `toJSON()`.
-- [ ] React UI renders entirely from the registry; empty + single-control categories work.
-- [ ] Counts: _N_ preferences across 16 categories; _M_ suspected duplicates flagged.
+- One `Preference` schema (`src/registry/types.ts`), one registry, search, machine-readable `toJSON()`.
+- 16 category files in `data/preferences/`, one per category.
+- Every preference has a stable kebab-case id, a category, an owner, a description, and keywords.
+- All 5 hard cases handled: ordered/locked multi-select, three `dependsOn` relationships,
+  dynamic device options, `dynamicLabel` flag for Privacy, builder vs managed list split.
+- Registry rejects duplicate ids at load time and flags suspected duplicates by token overlap.
+- Counts: ~90 preferences across 16 categories; 1 confirmed duplicate resolved (VIP-paused).
