@@ -1,9 +1,9 @@
 /**
  * test/search.test.ts
  *
- * Scaffolds for the search feature you'll build in src/search.ts. These are the cases that
- * matter most — the multi-hit and synonym tests are what prove the "didn't know it existed"
- * problem is actually solved.
+ * Scaffolds for the search feature you'll build in src/search/search.ts. These are the cases
+ * that matter most — the multi-hit and synonym tests are what prove the "didn't know it
+ * existed" problem is actually solved.
  */
 
 import { describe, it } from "vitest";

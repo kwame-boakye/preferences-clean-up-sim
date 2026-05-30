@@ -1,10 +1,10 @@
 /**
- * src/types.ts
+ * src/registry/types.ts
  *
- * STARTING PROPOSAL for the preference schema. This is intentionally incomplete in the
- * places that require judgment — see the TODOs and PROJECT.md Section 4. You are expected
- * to revise this type as you migrate and hit the hard cases. Don't reach for `any` to dodge
- * a case; change the type deliberately and record why in MIGRATION.md.
+ * STARTING PROPOSAL for the preference schema. Intentionally incomplete in the places that
+ * require judgment — see the TODOs and PROJECT.md Section 4. You are expected to revise
+ * this type as you migrate and hit the hard cases. Don't reach for `any` to dodge a case;
+ * change the type deliberately and record why in MIGRATION.md.
  */
 
 /** The 16 canonical categories. A preference's `category` MUST be one of these. */

@@ -1,5 +1,5 @@
 /**
- * src/registry.ts
+ * src/registry/registry.ts
  *
  * The "closet" — the single source of truth for preferences. This is a STUB: it has the
  * shape, the dedupe idea, and the query surface, but the migration data and the harder
@@ -80,11 +80,11 @@ export class Registry {
 
   /**
    * Fuzzy search across label, description, and keywords.
-   * TODO(kelvin): implement in src/search.ts and call it here. Must return ALL relevant hits
-   * for multi-hit queries ("unreads", "timezone", "english"), not just the first.
+   * TODO(kelvin): implement in src/search/search.ts and call it here. Must return ALL relevant
+   * hits for multi-hit queries ("unreads", "timezone", "english"), not just the first.
    */
   search(_query: string): Preference[] {
-    throw new Error("search() not implemented — build src/search.ts first");
+    throw new Error("search() not implemented — build src/search/search.ts first");
   }
 
   /**
@@ -107,7 +107,7 @@ export class Registry {
  */
 export function buildRegistry(): Registry {
   const registry = new Registry();
-  // import { availabilityPreferences } from "../data/preferences/availability.js";
+  // import { availabilityPreferences } from "../../data/preferences/availability.js";
   // availabilityPreferences.forEach((p) => registry.register(p));
   return registry;
 }

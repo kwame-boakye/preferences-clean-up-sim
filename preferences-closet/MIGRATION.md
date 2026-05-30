@@ -42,4 +42,5 @@ For each, write what you chose and why:
 ## The "after" (what it looks like now)
 
 - [ ] One `Preference` schema, one registry, search, machine-readable `toJSON()`.
+- [ ] React UI renders entirely from the registry; empty + single-control categories work.
 - [ ] Counts: _N_ preferences across 16 categories; _M_ suspected duplicates flagged.

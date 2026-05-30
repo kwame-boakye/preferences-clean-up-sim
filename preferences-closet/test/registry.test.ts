@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { Registry } from "../src/registry.js";
-import type { Preference } from "../src/types.js";
+import { Registry } from "../src/registry/registry.js";
+import type { Preference } from "../src/registry/types.js";
 import { availabilityPreferences } from "../data/preferences/availability.js";
 
 // helper: grab a preference by id from the fixture, failing loudly if it's missing

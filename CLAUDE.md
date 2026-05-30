@@ -7,14 +7,15 @@ what we're building, the full preference inventory, and the judgment calls invol
 
 A practice simulation of a real internship task: cleaning up a messy, unowned "preferences"
 system (modeled on Slack's Preferences dialog, 16 categories) by giving it a single schema, a
-validating registry ("the closet"), search, and a machine-readable export. The mess in
-`legacy/` is intentional. Do not "fix" it by deleting it — it's the before-state we migrate from.
+validating registry ("the closet"), search, a machine-readable export, and a React UI on top.
+The mess in `legacy/` is intentional. Do not "fix" it by deleting it — it's the before-state
+we migrate from.
 
 ## Stack
 
-- TypeScript (compiled with `tsc`), plain HTML + CSS for the UI.
-- Tests with Vitest.
-- No framework unless I explicitly ask for React.
+- **Vite + React 18 + TypeScript** in strict mode.
+- **Plain CSS modules** (`*.module.css`). No Tailwind, no styled-components, no UI libraries.
+- **Vitest** for tests, run via `npm test`.
 
 ## How I want you to work with me
 
@@ -30,16 +31,26 @@ validating registry ("the closet"), search, and a machine-readable export. The m
 
 ## Hard rules
 
-- Every preference must conform to the `Preference` type in `src/types.ts`. No "temporary"
-  loose objects, no `any` to dodge a hard case — if the type can't express something, we change
-  the type deliberately and write down why.
+- Every preference must conform to the `Preference` type in `src/registry/types.ts`. No
+  "temporary" loose objects, no `any` to dodge a hard case — if the type can't express
+  something, we change the type deliberately and write down why.
 - `id` is stable, unique, kebab-case, and is **never** the display label.
 - The registry must reject duplicate ids and surface suspected duplicates (start with the
   known VIP-"always allow notifications when paused" pair) rather than silently allowing them.
-- The UI renders from the registry. Do not hardcode a second list of preferences in the
-  render layer.
+- React components **render from the registry**. Do not hardcode a second list of preferences,
+  categories, or control types anywhere in `src/ui/`.
 - Empty categories (Salesforce) and single-control categories (Slack AI) must work without
-  special-casing.
+  special-casing — the renderer dispatches on shape, not on category name.
+
+## React conventions
+
+- Function components only. Hooks for state.
+- One component per file. Filename matches component name (`CategoryRail.tsx` exports `CategoryRail`).
+- Styles colocate with components: `Foo.tsx` + `Foo.module.css` in the same folder.
+- Props interfaces named `FooProps`, declared above the component.
+- No global state library needed at this scale — `useState`/`useContext` is enough.
+- A `<PreferenceRenderer>` dispatches on `pref.control` and renders the matching control
+  component. Add a new `case` for each control type as you build it.
 
 ## The known hard cases (don't paper over these)
 
@@ -49,11 +60,13 @@ validating registry ("the closet"), search, and a machine-readable export. The m
 - Dynamic options (audio device lists) and dynamic labels (privacy email injection).
 - Mixed value types (boolean / string / string[] / custom-theme object).
 
-## Conventions
+## Other conventions
 
-- Filenames: kebab-case. Types/interfaces: PascalCase. Functions/vars: camelCase.
-- Keep `src/render.ts` free of business logic — it reads from the registry and draws.
-- Search lives only in `src/search.ts`.
+- Filenames: kebab-case for non-component files (`registry.ts`), PascalCase for components.
+- Types/interfaces: PascalCase. Functions/vars: camelCase.
+- Search lives only in `src/search/search.ts`.
+- Don't put business logic in UI components — they consume the registry and search, they
+  don't reimplement them.
 
 ## When in doubt
 

@@ -2,9 +2,9 @@
 
 A practice project that recreates the *shape* of the real internship task: untangling
 a messy, unowned settings/preferences system, then giving it structure, search, and a
-machine-readable registry. The point is not to build a pretty settings page. The point
-is to start from a mess and impose order on it — because that is what the real summer
-project is.
+machine-readable registry — with a working React UI on top. The point is not to build a
+pretty settings page. The point is to start from a mess and impose order on it, because
+that is what the real summer project is.
 
 ---
 
@@ -26,8 +26,9 @@ The goals of the real project are to:
 3. **Expose a registry** so that both users and AI agents can query the current status of any
    preference in an easy, structured way.
 
-This simulation reproduces all three, at small scale, using the same stack you'll use
-this summer: **TypeScript, HTML, CSS** (no heavy framework required — see Section 6).
+This simulation reproduces all three at small scale, using the stack that lines up with the
+real Slack frontend: **Vite + React + TypeScript + plain CSS modules**, with **Vitest** for
+tests.
 
 ---
 
@@ -120,53 +121,78 @@ lay out options and trade-offs, then **you** pick:
 ## 5. What you're building (the "after")
 
 ### 5.1 A single preference schema
-One TypeScript type (`src/types.ts`) every preference conforms to. Ships pre-written as a
-*starting proposal* — you are expected to revise it as you migrate and hit the cases above.
+One TypeScript type (`src/registry/types.ts`) every preference conforms to. Ships pre-written
+as a *starting proposal* — you are expected to revise it as you migrate and hit the cases above.
 
 ### 5.2 A registry (the "closet")
-`src/registry.ts` — the single source of truth. Loads every preference, validates it,
-**rejects duplicate ids**, and **flags suspected duplicates** (the VIP-paused pair). Exposes:
+`src/registry/registry.ts` — the single source of truth. Loads every preference, validates
+it, **rejects duplicate ids**, and **flags suspected duplicates** (the VIP-paused pair). Exposes:
 - `getByCategory(category)` — power the rail / detail pane.
 - `getById(id)` — direct lookup.
-- `search(query)` — fuzzy match across label, description, keywords (fixes "didn't know it existed").
+- `search(query)` — fuzzy match across label, description, keywords.
 - `toJSON()` — full structured status of every preference. **The agent-readable output.**
 
-### 5.3 The UI (later milestone)
+### 5.3 The React UI
 Two-pane layout (category rail + detail pane) plus a top search box that filters across all
-categories at once. Plain HTML/CSS/TS. The UI is the demonstration, not the point — and it
-must render from the registry, never from a second hardcoded list.
+categories at once. Built with Vite + React + TypeScript + plain CSS modules. Components
+render from the registry — never from a second hardcoded list — and must handle empty
+categories (Salesforce) and single-control categories (Slack AI) without special-casing.
+
+A small set of control components covers everything: `<ToggleControl>`, `<SingleSelectControl>`,
+`<MultiSelectControl>`, etc. A `<PreferenceRenderer>` dispatches on `control` type and renders
+the right one. That dispatch is itself a clean test of whether the schema holds up.
 
 ---
 
 ## 6. Suggested stack & structure
 
-- **TypeScript** compiled with `tsc` (or Vite if you want hot reload later).
-- **Plain HTML + CSS** for the panel. React only if you explicitly want the practice.
-- **Vitest** (or `node --test`) for tests.
+- **Vite** (dev server, build, HMR).
+- **React 18 + TypeScript** in strict mode.
+- **Plain CSS modules** (`*.module.css`) — no Tailwind, no styled-components.
+- **Vitest** for tests, run via `npm test`.
 
 ```
 /
 ├── PROJECT.md
 ├── CLAUDE.md
 ├── MIGRATION.md          # you write this as you go
+├── README.md
 ├── package.json
 ├── tsconfig.json
-├── index.html
+├── tsconfig.node.json
+├── vite.config.ts
+├── index.html            # Vite entry
+├── public/               # static assets (empty for now)
 ├── src/
-│   ├── types.ts          # the Preference schema (starting proposal — revise it)
-│   ├── registry.ts       # the closet: load, validate, dedupe, query, toJSON
-│   ├── search.ts         # fuzzy search over label/description/keywords (you build)
-│   ├── render.ts         # rail + detail pane + search box (later milestone)
-│   └── main.ts           # wires registry -> render (later milestone)
+│   ├── main.tsx          # React entry point
+│   ├── App.tsx           # top-level layout
+│   ├── registry/
+│   │   ├── types.ts          # the Preference schema (starting proposal — revise it)
+│   │   ├── registry.ts       # the closet: load, validate, dedupe, query, toJSON
+│   │   └── index.ts          # re-exports
+│   ├── search/
+│   │   └── search.ts         # fuzzy search (you build)
+│   └── ui/
+│       ├── components/
+│       │   ├── CategoryRail.tsx
+│       │   ├── DetailPane.tsx
+│       │   ├── SearchBox.tsx
+│       │   ├── PreferenceRenderer.tsx
+│       │   ├── ToggleControl.tsx
+│       │   ├── SingleSelectControl.tsx
+│       │   └── ... (add as you migrate)
+│       └── styles/
+│           └── *.module.css  # per-component CSS modules
 ├── data/
 │   └── preferences/      # the CLEAN, migrated preferences (you create, per category)
+│       └── availability.ts   # one fully-worked example, ships pre-migrated
 ├── legacy/               # the deliberate mess — your "before" (pre-seeded)
 │   ├── notifications-and-misc.ts
 │   ├── home-prefs.json
 │   └── random-team-additions.ts
 └── test/
     ├── registry.test.ts  # no dup ids, every pref validates, queries work
-    └── search.test.ts     # "dark mode" finds appearance theme/color-mode, etc.
+    └── search.test.ts    # "dark mode" finds appearance theme/color-mode, etc.
 ```
 
 ---
@@ -176,18 +202,30 @@ must render from the registry, never from a second hardcoded list.
 The PM said the first couple of weeks are beginner bugs and ramp-up before real work.
 Mirror that:
 
-1. **Warm-up.** Get the repo compiling. Read `legacy/` and just *list* what's there.
-2. **Design the schema.** Revise `types.ts` to handle the Section-4 cases. This unlocks everything.
-3. **Build the registry.** Load + validate + reject dup ids + flag suspected dups. Tests alongside.
+1. **Warm-up.** Get the repo running. `npm install`, `npm test` (green), `npm run dev` (Vite
+   serves a placeholder page). Read `legacy/` and just *list* what's there.
+2. **Design the schema.** Revise `src/registry/types.ts` to handle the Section-4 cases. This
+   unlocks everything else.
+3. **Build the registry.** Load + validate + reject dup ids + flag suspected dups. Tests
+   alongside in `test/registry.test.ts`.
 4. **Migrate.** Move every legacy preference into `data/preferences/` (one file per category),
    assigning canonical id + category + owner. Record each decision in `MIGRATION.md`.
-5. **Add search.** Fuzzy search; prove with tests that synonyms find the right preference and
-   that multi-hit cases ("unreads", "timezone", "english") return all relevant results.
-6. **Expose the registry.** Implement `toJSON()`; write a tiny script that prints full status —
-   your stand-in for "an AI agent can read the state."
-7. **UI.** Two-pane render from the registry + working search box. Handle empty categories
-   (Salesforce) and single-control categories (Slack AI) without special-casing.
-8. **Write-up.** Finish `MIGRATION.md`: what was messy, what changed, why. This is your demo artifact.
+5. **Add search.** Fuzzy search in `src/search/search.ts`; prove with tests that synonyms find
+   the right preference and that multi-hit cases ("unreads", "timezone", "english") return all
+   relevant results.
+6. **Expose the registry.** Implement `toJSON()`; write a tiny script that prints full status
+   — your stand-in for "an AI agent can read the state."
+7. **Build the React UI — structure.** Two-pane layout in `App.tsx`: `<CategoryRail>` reading
+   categories from the registry on the left, `<DetailPane>` showing the selected category on
+   the right. No styling polish yet — just structure that renders from the registry.
+8. **Build the React UI — controls.** One control component per control type (`<ToggleControl>`,
+   `<SingleSelectControl>`, etc.) plus a `<PreferenceRenderer>` that dispatches on `control`.
+   Local React state for now — no persistence required. Empty categories (Salesforce) and
+   single-control categories (Slack AI) must render correctly without special-casing.
+9. **Build the React UI — search.** `<SearchBox>` at the top filters across all categories at
+   once. Selecting a result jumps the detail pane to that preference's category and highlights it.
+10. **Polish + write-up.** Some CSS modules love for the layout, and finish `MIGRATION.md`:
+    what was messy, what changed, why. This is your demo artifact.
 
 ---
 
@@ -199,7 +237,8 @@ Mirror that:
       flexible value types, builder-vs-managed lists.
 - [ ] Search finds preferences by synonym/description and returns all relevant multi-hits.
 - [ ] `toJSON()` emits the full, structured status of all preferences.
-- [ ] Rail + detail pane render from the registry; empty and single-control categories work.
+- [ ] React UI renders categories, control values, and search results entirely from the registry.
+- [ ] Empty and single-control categories work without special-casing.
 - [ ] Tests cover registry validation, dedupe, and search.
 - [ ] `MIGRATION.md` documents the before/after and the reasoning.
 
@@ -215,6 +254,8 @@ You told the PM you want to (a) get fast at navigating an unfamiliar, messy code
 - **Communicating clearly:** the schema, the canonical categories, and `MIGRATION.md` are all
   acts of communication through code and writing. The PM values clarity over polish — a clear
   `MIGRATION.md` beats a fancy UI.
+- **React in a real codebase:** building one control component per type and dispatching from a
+  schema mirrors how the real Slack preferences code is structured. It's the same pattern.
 
 When you spar with Claude Code, lean on it for the parts you want to learn from, but make the
 Section-4 judgment calls yourself. Those are what you'll be doing for real in a few weeks.

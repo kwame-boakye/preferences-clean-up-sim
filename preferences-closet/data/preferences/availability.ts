@@ -10,7 +10,7 @@
  *   - an owner assigned, a description written, search keywords added
  */
 
-import type { Preference } from "../../src/types.js";
+import type { Preference } from "../../src/registry/types.js";
 
 export const availabilityPreferences: Preference[] = [
   {

@@ -7,7 +7,7 @@
  *   - keyed by `key`, but some use `title`, some use `name`, some have neither
  *   - no categories — "everyone knows where notification stuff goes" (we do not)
  *   - the Availability working-hours thing got dumped here too, idk why
- *   - HEADS UP: the "vip paused" toggle is ALSO defined in legacy.ts (the vip file).
+ *   - HEADS UP: the "vip paused" toggle is ALSO defined in random-team-additions.ts.
  *     Nobody noticed. They have different keys and slightly different wording.
  */
 
@@ -21,7 +21,7 @@ export const notificationPrefs = [
 
   { key: "thread_replies", title: "Thread replies", on: true },
 
-  // ▼▼▼ DUPLICATE #1 (the other copy is in legacy.ts as "vipAlwaysAllow") ▼▼▼
+  // ▼▼▼ DUPLICATE #1 (the other copy is in random-team-additions.ts as "vipAlwaysAllow") ▼▼▼
   { key: "vip_when_paused", title: "Messages from VIPs, even if notifications are paused", on: false },
   // ▲▲▲
 

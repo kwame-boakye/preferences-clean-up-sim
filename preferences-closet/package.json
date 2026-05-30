@@ -1,16 +1,30 @@
 {
   "name": "preferences-closet",
   "version": "0.1.0",
-  "description": "Internship simulation: clean up a messy preferences system into a schema + registry + search.",
+  "description": "Internship simulation: clean up a messy preferences system into a schema + registry + search, with a React UI.",
+  "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dump": "tsc && node dist/scripts/dump.js"
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "happy-dom": "^14.12.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
     "vitest": "^1.6.0"
   }
 }
