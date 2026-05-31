@@ -8,21 +8,24 @@ interface DetailPaneProps {
   registry: Registry;
   category: Category;
   highlightId?: string;
+  onPreferenceChange?: (id: string, value: PreferenceValue) => void;
 }
 
 function formatCategory(cat: Category): string {
   return cat.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function DetailPane({ registry, category, highlightId }: DetailPaneProps) {
+export function DetailPane({ registry, category, highlightId, onPreferenceChange }: DetailPaneProps) {
   const prefs = registry.getByCategory(category);
 
   const [values, setValues] = useState<Record<string, PreferenceValue>>(() =>
     Object.fromEntries(prefs.map((p) => [p.id, p.default])),
   );
 
-  const handleChange = (id: string, v: PreferenceValue) =>
+  const handleChange = (id: string, v: PreferenceValue) => {
     setValues((prev) => ({ ...prev, [id]: v }));
+    onPreferenceChange?.(id, v);
+  };
 
   return (
     <div className={styles.pane}>

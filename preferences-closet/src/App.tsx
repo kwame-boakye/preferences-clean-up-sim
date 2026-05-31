@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import type { Preference } from "./registry/types.js";
+import { useEffect, useMemo, useState } from "react";
+import type { Preference, PreferenceValue } from "./registry/types.js";
 import type { Category } from "./registry/types.js";
 import { buildRegistry } from "./registry/registry.js";
 import { CategoryRail } from "./ui/components/CategoryRail.js";
@@ -12,6 +12,17 @@ export function App() {
   const [selected, setSelected] = useState<Category>("availability");
   const [highlightId, setHighlightId] = useState<string | undefined>(undefined);
 
+  const colorModeDefault = useMemo(() => {
+    const pref = registry.getById("appearance-color-mode");
+    return typeof pref?.default === "string" ? pref.default : "system";
+  }, [registry]);
+
+  const [colorMode, setColorMode] = useState<string>(colorModeDefault);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = colorMode;
+  }, [colorMode]);
+
   const handleCategorySelect = (cat: Category) => {
     setSelected(cat);
     setHighlightId(undefined);
@@ -20,6 +31,12 @@ export function App() {
   const handleSearchSelect = (pref: Preference) => {
     setSelected(pref.category);
     setHighlightId(pref.id);
+  };
+
+  const handlePreferenceChange = (id: string, value: PreferenceValue) => {
+    if (id === "appearance-color-mode" && typeof value === "string") {
+      setColorMode(value);
+    }
   };
 
   return (
@@ -34,6 +51,7 @@ export function App() {
           registry={registry}
           category={selected}
           highlightId={highlightId}
+          onPreferenceChange={handlePreferenceChange}
         />
       </div>
     </div>

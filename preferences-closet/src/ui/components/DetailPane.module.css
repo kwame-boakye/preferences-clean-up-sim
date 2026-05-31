@@ -2,40 +2,19 @@
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
+  background: var(--color-bg);
 }
 
 .heading {
   margin-top: 0;
   font-size: 1.25rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #ddd;
-}
-
-.list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.label {
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.description {
-  font-size: 0.825rem;
-  color: #666;
-  margin-top: 0.2rem;
-  line-height: 1.4;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .empty {
-  color: #888;
+  color: var(--color-text-muted);
   font-style: italic;
   font-size: 0.9rem;
 }

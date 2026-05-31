@@ -1,12 +1,63 @@
 :root {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.5;
-  color-scheme: light dark;
+  color-scheme: light;
+
+  --color-bg: #ffffff;
+  --color-surface: #f7f7f8;
+  --color-text: #111111;
+  --color-text-secondary: #666666;
+  --color-text-muted: #888888;
+  --color-border: #dddddd;
+  --color-border-subtle: #eeeeee;
+  --color-hover: rgba(0, 0, 0, 0.05);
+  --color-active: rgba(0, 0, 0, 0.08);
+  --color-dropdown-bg: #ffffff;
+  --color-highlighted-bg: #fffbe6;
+  --color-highlighted-outline: #f0c040;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #1a1a1a;
+  --color-surface: #252525;
+  --color-text: #e8e8e8;
+  --color-text-secondary: #aaaaaa;
+  --color-text-muted: #777777;
+  --color-border: #3a3a3a;
+  --color-border-subtle: #2d2d2d;
+  --color-hover: rgba(255, 255, 255, 0.06);
+  --color-active: rgba(255, 255, 255, 0.1);
+  --color-dropdown-bg: #2a2a2a;
+  --color-highlighted-bg: #3a3320;
+  --color-highlighted-outline: #c8a020;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    color-scheme: dark;
+
+    --color-bg: #1a1a1a;
+    --color-surface: #252525;
+    --color-text: #e8e8e8;
+    --color-text-secondary: #aaaaaa;
+    --color-text-muted: #777777;
+    --color-border: #3a3a3a;
+    --color-border-subtle: #2d2d2d;
+    --color-hover: rgba(255, 255, 255, 0.06);
+    --color-active: rgba(255, 255, 255, 0.1);
+    --color-dropdown-bg: #2a2a2a;
+    --color-highlighted-bg: #3a3320;
+    --color-highlighted-outline: #c8a020;
+  }
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 code {
