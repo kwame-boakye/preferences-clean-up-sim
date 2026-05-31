@@ -7,13 +7,14 @@ import styles from "./DetailPane.module.css";
 interface DetailPaneProps {
   registry: Registry;
   category: Category;
+  highlightId?: string;
 }
 
 function formatCategory(cat: Category): string {
   return cat.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export function DetailPane({ registry, category }: DetailPaneProps) {
+export function DetailPane({ registry, category, highlightId }: DetailPaneProps) {
   const prefs = registry.getByCategory(category);
 
   const [values, setValues] = useState<Record<string, PreferenceValue>>(() =>
@@ -36,6 +37,7 @@ export function DetailPane({ registry, category }: DetailPaneProps) {
             value={values[pref.id] ?? pref.default}
             onChange={(v) => handleChange(pref.id, v)}
             allValues={values}
+            highlighted={pref.id === highlightId}
           />
         ))
       )}

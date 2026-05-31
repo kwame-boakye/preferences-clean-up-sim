@@ -37,4 +37,19 @@ describe("App", () => {
     await user.click(screen.getByRole("button", { name: /salesforce/i }));
     expect(screen.getByText(/no preferences in this category/i)).toBeInTheDocument();
   });
+
+  it("search: typing jumps the detail pane to the matched preference's category", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const searchInput = screen.getByPlaceholderText(/search preferences/i);
+    await user.type(searchInput, "dark mode");
+
+    // "Color mode" is the label of appearance-color-mode, found via keywords
+    const result = await screen.findByText("Color mode");
+    await user.click(result);
+
+    // Detail pane should now show the Appearance category heading
+    expect(screen.getByRole("heading", { name: /appearance/i })).toBeInTheDocument();
+  });
 });

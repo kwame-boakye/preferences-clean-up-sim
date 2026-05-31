@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { Preference, PreferenceValue, TimeRangeValue } from "../../registry/types.js";
 import { ToggleControl } from "./ToggleControl.js";
 import { TextControl } from "./TextControl.js";
@@ -15,16 +16,34 @@ interface PreferenceRendererProps {
   value: PreferenceValue;
   onChange: (v: PreferenceValue) => void;
   allValues: Record<string, PreferenceValue>;
+  highlighted?: boolean;
 }
 
-export function PreferenceRenderer({ pref, value, onChange, allValues }: PreferenceRendererProps) {
+export function PreferenceRenderer({
+  pref,
+  value,
+  onChange,
+  allValues,
+  highlighted,
+}: PreferenceRendererProps) {
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (highlighted && rowRef.current) {
+      rowRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlighted]);
+
   const isDisabled =
     pref.dependsOn !== undefined
       ? allValues[pref.dependsOn.id] !== pref.dependsOn.when
       : false;
 
   return (
-    <div className={`${styles.row} ${isDisabled ? styles.dimmed : ""}`}>
+    <div
+      ref={rowRef}
+      className={`${styles.row} ${isDisabled ? styles.dimmed : ""} ${highlighted ? styles.highlighted : ""}`}
+    >
       <div className={styles.meta}>
         <div className={styles.label}>{pref.label}</div>
         <div className={styles.description}>{pref.description}</div>

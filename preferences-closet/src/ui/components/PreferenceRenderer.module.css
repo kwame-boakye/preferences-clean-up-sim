@@ -12,6 +12,13 @@
   pointer-events: none;
 }
 
+.highlighted {
+  background: #fffbe6;
+  border-radius: 4px;
+  outline: 2px solid #f0c040;
+  outline-offset: -2px;
+}
+
 .meta {
   flex: 1;
   min-width: 0;
